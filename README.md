@@ -1,5 +1,22 @@
-### Рандомайзер обоев рабочего стола 
 
-## Параметры запуска через консоль
-1) -с выведит все доступные категории
-2) <<n>> любое допступное чило без кавычек
+# Рандомайзер обоев рабочего стола WallSwap UV
+
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
+
+
+## API Reference
+
+#### Запуск через консоль
+
+```bash
+  main.exe -c
+```
+Выведет все доступные категории и завершит выполнение
+
+```bash
+  main.exe 10
+```
+Выберит сразу 10 категорию 
