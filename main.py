@@ -72,6 +72,7 @@ def get_categories() -> list[Category]:
         )
         for link in soup.select(".filters__list .filter__link")
     ]
+    categories.append(Category("Все категории", "https://wallpaperscraft.ru"))
 
     if categories:
         console.print(f"[bold cyan]Найдено категорий:[/bold cyan] {len(categories)}")
@@ -103,7 +104,15 @@ def get_random_wallpaper(category_url: str) -> str | None:
         f"[bold violet]Выбрана страница:[/bold violet] [yellow]{page}[/yellow]"
     )
 
-    response = fetch(f"{category_url}/page{page}")
+    if category_url == "https://wallpaperscraft.ru":
+        url = f"https://wallpaperscraft.ru/all/page{page}"
+    else:
+        url = f"{category_url}/page{page}"
+    console.print(
+        f"[bold violet]Выбрана страница:[/bold violet] [yellow]{url}[/yellow]"
+    )
+
+    response = fetch(url)
     if not response:
         return None
 
