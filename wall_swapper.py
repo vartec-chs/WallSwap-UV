@@ -77,7 +77,9 @@ class WallSwapper:
         if not self.select_category:
             console.print("\n[bold red]❌ Вы не выбрали категорию![/bold red]", end="")
             return
-        wallpaper_url = get_random_wallpaper(self.select_category.url, self.select_category.name)
+        wallpaper_url = get_random_wallpaper(
+            self.select_category.url, self.select_category.name
+        )
         if not wallpaper_url:
             retry = Confirm.ask("[bold yellow]Попробовать еще раз?[/bold yellow]")
             if not retry:
@@ -128,16 +130,26 @@ class WallSwapper:
         console.print("\n\n[bold green]✅ Обои удалены![/bold green]")
 
     def __args_handler(self):
-        pass
+        arg_choice = self.sys_params[0] if self.sys_params else None
+        if arg_choice:
+            if arg_choice.isnumeric() and int(arg_choice) in range(
+                1, len(self.categories) + 1
+            ):
+                self.select_category = self.categories[int(arg_choice) - 1]
+                clear_cmd()
+                console.print(
+                    f"\n[bold green]✅ Выбрана категория: [bold cyan]{self.select_category.name}[/bold cyan]",
+                    end="",
+                )
+            elif arg_choice.isnumeric() and int(arg_choice) == 0:
+                console.print("\n[bold green]✅ Вы вышли![/bold green]\n")
+                sys.exit(0)
+            else:
+                console.print(
+                    "[bold red]Ошибка: Введите число в пределах списка.[/bold red]"
+                )
 
     def __choice_handler(self):
-        pass
-
-    def run(self):
-        clear_cmd()
-        self.__args_handler()
-        self.__load_categories()
-
         while True:
             action = wait_for_key_press()
             match action:
@@ -157,3 +169,9 @@ class WallSwapper:
                     self.__edit_config()
                 case ActionKey.EXIT:
                     sys.exit(0)
+
+    def run(self):
+        clear_cmd()
+        self.__load_categories()
+        self.__args_handler()
+        self.__choice_handler()

@@ -18,9 +18,9 @@ class ActionKey(Enum):
 
 
 options = {
-    "shift": {
-        "name": "shift",
-        "alias": ["right shift", "left shift"],
+    "enter": {
+        "name": "enter",
+        # "alias": ["right shift", "left shift"],
         "action": ActionKey.NEXT,
         "description": "Загрузить следующие обои",
     },

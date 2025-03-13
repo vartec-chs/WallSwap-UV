@@ -24,47 +24,59 @@ def get_random_wallpaper(category_url: str, category_name: str) -> str | None:
     console.print(
         f"[bold gray]Выбрана категория:[/bold gray] [yellow]{category_name}[/yellow]"
     )
-    response = fetch(category_url)
-    if not response:
-        return None
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    random_page = None
 
-    # Определяем последнюю страницу
-    pager_items = soup.select(".pager__item")
-    last_page = 1
-    if len(pager_items) >= 4:
-        href = pager_items[3].select_one("a")["href"]
-        last_page = int(href.split("page")[-1])
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[cyan]Поиск страниц и получения рандомных обоев...[/cyan]"),
+        transient=True,
+    ) as progress:
+        task = progress.add_task("", total=None)  # Бесконечный лоадер
+        response = fetch(category_url)
+        if not response:
+            progress.remove_task(task)
+            return None
 
-    console.print(f"[bold gray]Всего страниц:[/bold gray] [yellow]{last_page}[/yellow]")
-    page = random.randint(1, last_page)
-    console.print(
-        f"[bold violet]Выбрана страница:[/bold violet] [yellow]{page}[/yellow]"
-    )
+        soup = BeautifulSoup(response.text, "html.parser")
+        # Определяем последнюю страницу
+        pager_items = soup.select(".pager__item")
+        last_page = 1
+        if len(pager_items) >= 4:
+            href = pager_items[3].select_one("a")["href"]
+            last_page = int(href.split("page")[-1])
 
-    if category_url == "https://wallpaperscraft.ru":
-        url = f"https://wallpaperscraft.ru/all/page{page}"
-    else:
-        url = f"{category_url}/page{page}"
-    console.print(
-        f"[bold violet]Выбрана страница:[/bold violet] [yellow]{url}[/yellow]"
-    )
+        # console.print(f"[bold gray]Всего страниц:[/bold gray] [yellow]{last_page}[/yellow]")
+        page = random.randint(1, last_page)
+        # console.print(
+        #     f"[bold violet]Выбрана страница:[/bold violet] [yellow]{page}[/yellow]"
+        # )
 
-    response = fetch(url)
-    if not response:
-        return None
+        if category_url == "https://wallpaperscraft.ru":
+            url = f"https://wallpaperscraft.ru/all/page{page}"
+        else:
+            url = f"{category_url}/page{page}"
+        # console.print(
+        #     f"[bold violet]Выбрана страница:[/bold violet] [yellow]{url}[/yellow]"
+        # )
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    wallpapers = [a["href"] for a in soup.select(".wallpapers__link")]
-    if not wallpapers:
-        console.print("[bold red]Нет обоев на этой странице.[/bold red]")
-        return None
+        response = fetch(url)
+        if not response:
+            progress.remove_task(task)
+            return None
 
-    random_page = random.choice(wallpapers)
-    console.print(
-        f"[bold violet]Выбрана ссылка на обои:[/bold violet] [yellow]{random_page}[/yellow]"
-    )
+        soup = BeautifulSoup(response.text, "html.parser")
+        wallpapers = [a["href"] for a in soup.select(".wallpapers__link")]
+        if not wallpapers:
+            progress.remove_task(task)
+            console.print("[bold red]Нет обоев на этой странице.[/bold red]")
+            return None
+
+        random_page = random.choice(wallpapers)
+        # console.print(
+        #     f"[bold violet]Выбрана ссылка на обои:[/bold violet] [yellow]{random_page}[/yellow]"
+        # )
+        progress.remove_task(task)
 
     return get_image_url(f"https://wallpaperscraft.ru{random_page}")
 
