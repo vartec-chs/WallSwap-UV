@@ -102,7 +102,7 @@ class ConfigManager:
     def create_config_interactive(self, config_instance: T):
         """Интерактивный опрос для создания конфига"""
 
-        console.rule("\nПожалуйста, настройте параметры конфигурации:\n")
+        console.rule("Пожалуйста, настройте параметры конфигурации:")
 
         # Опрашиваем пользователя на ввод каждого параметра
         config_instance.max_items = IntPrompt.ask(

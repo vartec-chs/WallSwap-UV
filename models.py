@@ -9,7 +9,6 @@ class Category:
 
 @dataclass
 class WallpaperHistory:
-    # timestamp: int
     url: str
     local_path: str
     category: str

@@ -17,68 +17,73 @@ class ActionKey(Enum):
     CONFIG_EDIT = "config_edit"
 
 
-def show_help():
-    help_text = """
-    [bold cyan]Доступные команды:[/bold cyan]
+options = {
+    "shift": {
+        "name": "shift",
+        "alias": ["right shift", "left shift"],
+        "action": ActionKey.NEXT,
+        "description": "Загрузить следующие обои",
+    },
+    "backspace": {
+        "name": "backspace",
+        "action": ActionKey.PREVIOUS,
+        "description": "Вернуться к предыдущим обоям",
+    },
+    "esc": {
+        "name": "esc",
+        "action": ActionKey.EXIT,
+        "description": "Выйти из программы",
+    },
+    "h": {
+        "name": "h",
+        "action": ActionKey.HELP,
+        "description": "Показать эту справку",
+    },
+    "c": {
+        "name": "c",
+        "action": ActionKey.CATEGORY,
+        "description": "Изменить категорию обоев",
+    },
+    "i": {
+        "name": "i",
+        "action": ActionKey.INFO,
+        "description": "Показать информацию о текущих обоях",
+    },
+    "d": {
+        "name": "d",
+        "action": ActionKey.DELETE_HISTORY,
+        "description": "Удалить историю обоев",
+    },
+    "s": {
+        "name": "s",
+        "action": ActionKey.CONFIG_EDIT,
+        "description": "Отредактировать конфигурацию",
+    },
+}
 
-    [bold yellow]Shift[/bold yellow] - Загрузить следующие обои
-    [bold yellow]Backspace[/bold yellow] - Вернуться к предыдущим обоям
-    [bold yellow]Esc[/bold yellow] - Выйти из программы
-    [bold yellow]h[/bold yellow] - Показать эту справку
-    [bold yellow]c[/bold yellow] - Изменить категорию обоев
-    [bold yellow]i[/bold yellow] - Показать информацию о текущих обоях,
-    [bold yellow]d[/bold yellow] - Удалить историю обоев
-    [bold yellow]s[/bold yellow] - Отредактировать конфигурацию
-    """
-    console.print(Panel(help_text, title="Справка", border_style="green"))
+
+def show_help():
+    console.print("\n")
+    help_text = "\n".join(
+        [
+            f"[bold yellow]{key}[/bold yellow] - {options[key]['description']}"
+            for key in options
+        ]
+    )
+    console.print(
+        Panel(help_text, title="[bold]Доступные команды[/bold]", border_style="green")
+    )
 
 
 def wait_for_key_press() -> ActionKey:
     show_help()
-    console.print("\n[bold yellow]Нажмите клавишу из списка:", end=" ")
+    console.print("\n[bold]Нажмите клавишу из списка:[/bold]", end=" ")
     while True:
         event = keyboard.read_event()
         if event.event_type == "down":
-            if event.name in ["shift", "right shift", "left shift"]:
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]Shift[/bold white][/bold yellow]"
-                )
-                return ActionKey.NEXT
-            elif event.name == "backspace":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]Backspace[/bold white][/bold yellow]"
-                )
-                return ActionKey.PREVIOUS
-            elif event.name == "esc":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]Esc[/bold white][/bold yellow]"
-                )
-                return ActionKey.EXIT
-            elif event.name == "h":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]h[/bold white][/bold yellow]"
-                )
-                return ActionKey.HELP
-            elif event.name == "c":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]c[/bold white][/bold yellow]"
-                )
-                return ActionKey.CATEGORY
-            elif event.name == "i":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]i[/bold white][/bold yellow]"
-                )
-                return ActionKey.INFO
-            elif event.name == "d":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]d[/bold white][/bold yellow]"
-                )
-                return ActionKey.DELETE_HISTORY
-            elif event.name == "s":
-                console.print(
-                    "[bold yellow]нажата клавиша [bold white]s[/bold white][/bold yellow]"
-                )
-                return ActionKey.CONFIG_EDIT
+            if event.name in options:
+                pressed_key_print(event.name)
+                return options[event.name]["action"]
         time.sleep(0.1)
 
 
@@ -93,3 +98,9 @@ def show_wallpaper_info(wallpaper: WallpaperHistory, index: int, total: int):
     """
     console.print(Panel(info_text, title="Информация", border_style="blue"))
     console.print("\n")
+
+
+def pressed_key_print(key_name: str):
+    console.print(
+        f"[bold yellow]нажата клавиша [underline]{key_name}[/underline][/bold yellow]"
+    )

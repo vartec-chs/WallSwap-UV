@@ -13,13 +13,17 @@ from rich.progress import (
 )
 
 from config import console, logger, HEADERS
+from utils.clear_cmd import clear_cmd
 from utils.fetcher import fetch
 
 
-def get_random_wallpaper(category_url: str) -> str | None:
+def get_random_wallpaper(category_url: str, category_name: str) -> str | None:
     """Ищем случайную обложку из выбранной категории."""
     console.rule("[bold violet]Поиск обоев...[/bold violet]")
 
+    console.print(
+        f"[bold gray]Выбрана категория:[/bold gray] [yellow]{category_name}[/yellow]"
+    )
     response = fetch(category_url)
     if not response:
         return None
@@ -158,7 +162,8 @@ def download_wallpaper(image_url: str, save_path: str) -> bool:
                 logger.error(f"Ошибка при скачивании файла: {e}")
                 return False
 
-        console.print("[bold green]✅ Скачивание завершено![/bold green]\n\n")
+        clear_cmd()
+        console.print("[bold green]✅ Скачивание завершено![/bold green]", end="")
         return True
 
     except requests.RequestException as e:
