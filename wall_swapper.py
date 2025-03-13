@@ -2,13 +2,12 @@ import os
 import sys
 import time
 
-
 from config import console, logger, cache_dir
 from models import Category, WallpaperHistory
 
 from utils.categories import get_categories, show_categories
 from utils.wallpapers import get_random_wallpaper, download_wallpaper, set_wallpaper
-from utils.actions import ActionKey, show_help, wait_for_key_press, show_wallpaper_info
+from utils.actions import ActionKey, wait_for_key_press, show_wallpaper_info
 from utils.config_manager import ConfigManager
 from utils.history_manager import WallpaperHistoryManager
 from utils.clear_cmd import clear_cmd
@@ -40,11 +39,11 @@ class WallSwapper:
         self.select_category = self.categories[0]
 
     def __show_categories(self):
-        clear_cmd()
+        # clear_cmd()
         show_categories(self.categories)
 
     def __choice_category(self):
-        clear_cmd()
+        # clear_cmd()
         self.__show_categories()
         while True:
             new_choice = Prompt.ask(
@@ -73,7 +72,7 @@ class WallSwapper:
                 )
 
     def __next_wallpaper(self):
-        clear_cmd()
+        # clear_cmd()
         if not self.select_category:
             console.print("\n[bold red]❌ Вы не выбрали категорию![/bold red]", end="")
             return
@@ -94,8 +93,8 @@ class WallSwapper:
             )
             self.current_index = len(self.history_manager.get_history()) - 1
 
-    def __previous_wallpaper(self):
-        clear_cmd()
+    def __previous_history(self):
+        # clear_cmd()
         if self.current_index > 0:
             self.current_index -= 1
             previous = self.history_manager.get_history()[self.current_index]
@@ -108,8 +107,22 @@ class WallSwapper:
         else:
             console.print("\n\n[bold red]❌ Нет предыдущих обоев в истории.[/bold red]")
 
+    def __next_history(self):
+        # clear_cmd()
+        if self.current_index < len(self.history_manager.get_history()) - 1:
+            self.current_index += 1
+            next = self.history_manager.get_history()[self.current_index]
+            show_wallpaper_info(
+                next,
+                self.current_index,
+                len(self.history_manager.get_history()),
+            )
+            set_wallpaper(next.local_path)
+        else:
+            console.print("\n\n[bold red]❌ Нет следующих обоев в истории.[/bold red]")
+
     def __info_wallpaper(self):
-        clear_cmd()
+        # clear_cmd()
         if self.current_index >= 0:
             show_wallpaper_info(
                 self.history_manager.get_history()[self.current_index],
@@ -120,11 +133,11 @@ class WallSwapper:
             console.print("\n\n[bold red]❌ Нет информации об обоях.[/bold red]")
 
     def __edit_config(self):
-        clear_cmd()
+        # clear_cmd()
         self.config_manager.edit_config_interactive()
 
     def __delete_history(self):
-        clear_cmd()
+        # clear_cmd()
         self.history_manager.clear_history()
         self.current_index = -1
         console.print("\n\n[bold green]✅ Обои удалены![/bold green]")
@@ -152,13 +165,10 @@ class WallSwapper:
     def __choice_handler(self):
         while True:
             action = wait_for_key_press()
+            clear_cmd()
             match action:
                 case ActionKey.NEXT:
                     self.__next_wallpaper()
-                case ActionKey.PREVIOUS:
-                    self.__previous_wallpaper()
-                case ActionKey.HELP:
-                    show_help()
                 case ActionKey.DELETE_HISTORY:
                     self.__delete_history()
                 case ActionKey.INFO:
@@ -167,11 +177,15 @@ class WallSwapper:
                     self.__choice_category()
                 case ActionKey.CONFIG_EDIT:
                     self.__edit_config()
+                case ActionKey.NEXT_HISTORY:
+                    self.__next_history()
+                case ActionKey.PREVIOUS_HISTORY:
+                    self.__previous_history()
                 case ActionKey.EXIT:
+                    console.print("[bold green]✅ Вы вышли![/bold green]\n")
                     sys.exit(0)
 
     def run(self):
-        clear_cmd()
         self.__load_categories()
         self.__args_handler()
         self.__choice_handler()

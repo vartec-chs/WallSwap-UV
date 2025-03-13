@@ -8,7 +8,8 @@ from enum import Enum
 
 class ActionKey(Enum):
     NEXT = "next"
-    PREVIOUS = "previous"
+    PREVIOUS_HISTORY = "previous_history"
+    NEXT_HISTORY = "next_history"
     EXIT = "exit"
     CATEGORY = "category"
     INFO = "info"
@@ -26,18 +27,19 @@ options = {
     },
     "backspace": {
         "name": "backspace",
-        "action": ActionKey.PREVIOUS,
+        "action": ActionKey.PREVIOUS_HISTORY,
         "description": "Вернуться к предыдущим обоям",
+    },
+    "shift": {
+        "name": "shift",
+        "alias": ["right_shift", "left_shift"],
+        "action": ActionKey.NEXT_HISTORY,
+        "description": "Перейти к следующим обоям",
     },
     "esc": {
         "name": "esc",
         "action": ActionKey.EXIT,
         "description": "Выйти из программы",
-    },
-    "h": {
-        "name": "h",
-        "action": ActionKey.HELP,
-        "description": "Показать эту справку",
     },
     "c": {
         "name": "c",
@@ -97,7 +99,6 @@ def show_wallpaper_info(wallpaper: WallpaperHistory, index: int, total: int):
     [bold yellow]Позиция в истории:[/bold yellow] {index + 1} из {total}
     """
     console.print(Panel(info_text, title="Информация", border_style="blue"))
-    console.print("\n")
 
 
 def pressed_key_print(key_name: str):

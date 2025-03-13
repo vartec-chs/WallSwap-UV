@@ -1,4 +1,5 @@
 import random
+from threading import Thread
 import requests
 import ctypes
 from bs4 import BeautifulSoup
@@ -151,7 +152,7 @@ def download_wallpaper(image_url: str, save_path: str) -> bool:
                     "[bold red]Ошибка: пустой файл или неизвестный размер.[/bold red]"
                 )
                 return False
-
+            console.print("\n")
             try:
                 with (
                     open(save_path, "wb") as file,
@@ -185,4 +186,8 @@ def download_wallpaper(image_url: str, save_path: str) -> bool:
 
 def set_wallpaper(image_path: str):
     """Установка обоев на рабочий стол."""
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, image_path, 3)
+    # ctypes.windll.user32.SystemParametersInfoW(20, 0, image_path, 3)
+    thread = Thread(
+        target=ctypes.windll.user32.SystemParametersInfoW, args=(20, 0, image_path, 3)
+    )
+    thread.start()

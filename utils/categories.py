@@ -1,4 +1,3 @@
-import sys
 from bs4 import BeautifulSoup
 from rich.table import Table
 from config import console, logger
@@ -54,7 +53,10 @@ def get_categories() -> list[Category]:
         progress.remove_task(task)
 
     if categories:
-        console.print(f"[bold cyan]Найдено категорий:[/bold cyan] {len(categories)}", end="")
+        console.print(
+            f"[bold white]Найдено категорий:[/bold white] [underline cyan]{len(categories)}[/underline cyan]",
+            end="",
+        )
     else:
         logger.error("Не удалось найти категории. Структура сайта могла измениться.")
     return categories
